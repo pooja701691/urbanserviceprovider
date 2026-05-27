@@ -1,0 +1,10 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#F3F4F6" rx="20"/>
+  <rect x="30" y="50" width="140" height="100" fill="none" stroke="#D1D5DB" stroke-width="1" rx="8"/>
+  <line x1="50" y1="150" x2="50" y2="60" stroke="#3B82F6" stroke-width="8" stroke-linecap="round"/>
+  <line x1="80" y1="150" x2="80" y2="45" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
+  <line x1="110" y1="150" x2="110" y2="65" stroke="#F59E0B" stroke-width="8" stroke-linecap="round"/>
+  <line x1="140" y1="150" x2="140" y2="55" stroke="#EF4444" stroke-width="8" stroke-linecap="round"/>
+  <line x1="30" y1="150" x2="170" y2="150" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="100" y="185" text-anchor="middle" font-size="12" fill="#6B7280">Bookings</text>
+</svg>

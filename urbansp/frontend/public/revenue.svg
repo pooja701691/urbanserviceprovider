@@ -1,0 +1,9 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#F3F4F6" rx="20"/>
+  <circle cx="100" cy="100" r="60" fill="none" stroke="#3B82F6" stroke-width="3"/>
+  <path d="M100 40 A60 60 0 0 1 152.47 61.47" fill="#3B82F6" stroke="white" stroke-width="2"/>
+  <path d="M152.47 61.47 A60 60 0 0 1 160 100" fill="#10B981" stroke="white" stroke-width="2"/>
+  <path d="M160 100 A60 60 0 0 1 100 160" fill="#F59E0B" stroke="white" stroke-width="2"/>
+  <path d="M100 160 A60 60 0 0 1 40 100" fill="#EF4444" stroke="white" stroke-width="2"/>
+  <text x="100" y="185" text-anchor="middle" font-size="12" fill="#6B7280">Revenue</text>
+</svg>
