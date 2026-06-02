@@ -1,9 +1,14 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function AdminSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--sidebar-width', collapsed ? '80px' : '280px');
+    return () => document.documentElement.style.removeProperty('--sidebar-width');
+  }, [collapsed]);
 
   return (
     <aside className={`admin-sidebar ${collapsed ? 'collapsed' : ''}`}>
@@ -26,10 +31,6 @@ function AdminSidebar() {
           <span className="icon">🔧</span>
           {!collapsed && <span>Services</span>}
         </NavLink>
-        <NavLink to="/dashboard/admin/providers" className={({ isActive }) => isActive ? 'active' : ''}>
-          <span className="icon">👥</span>
-          {!collapsed && <span>Providers</span>}
-        </NavLink>
         <NavLink to="/dashboard/admin/bookings" className={({ isActive }) => isActive ? 'active' : ''}>
           <span className="icon">📅</span>
           {!collapsed && <span>Bookings</span>}
@@ -37,6 +38,10 @@ function AdminSidebar() {
         <NavLink to="/dashboard/admin/users" className={({ isActive }) => isActive ? 'active' : ''}>
           <span className="icon">👤</span>
           {!collapsed && <span>Users</span>}
+        </NavLink>
+        <NavLink to="/dashboard/admin/providers" className={({ isActive }) => isActive ? 'active' : ''}>
+          <span className="icon">👥</span>
+          {!collapsed && <span>Providers</span>}
         </NavLink>
         <NavLink to="/dashboard/admin/analytics" className={({ isActive }) => isActive ? 'active' : ''}>
           <span className="icon">📈</span>

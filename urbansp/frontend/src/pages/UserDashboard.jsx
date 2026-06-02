@@ -43,9 +43,20 @@ function UserDashboard() {
   return (
     <section className="page-container dashboard-page">
       <div className="section-heading">
-        <span className="eyebrow">User dashboard</span>
-        <h2>Welcome back, {user?.name || 'Customer'}.</h2>
-        <p>Manage your requests, upcoming bookings, and service history.</p>
+        <div>
+          <span className="eyebrow">User dashboard</span>
+          <h2>
+            Welcome back, {user?.name || 'Customer'}.
+            <span className="role-badge role-badge-user" style={{ marginLeft: '0.75rem', verticalAlign: 'middle', fontSize: '0.7rem' }}>
+              👤 User
+            </span>
+          </h2>
+          <p>Manage your requests, upcoming bookings, and service history.</p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button className="button button-secondary" onClick={() => navigate('/services')}>Browse Services</button>
+          <button className="button" onClick={() => navigate('/booking')}>+ New Booking</button>
+        </div>
       </div>
 
       <div className="dashboard-grid">

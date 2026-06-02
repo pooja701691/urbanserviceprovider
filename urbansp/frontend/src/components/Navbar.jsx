@@ -27,17 +27,28 @@ function Navbar() {
         <NavLink to="/" end>Home</NavLink>
         <NavLink to="/services">Services</NavLink>
         <NavLink to="/nearby">Nearby</NavLink>
-        <NavLink to="/booking">Book a Service</NavLink>
+        {user && <NavLink to="/booking">Book a Service</NavLink>}
         {user && <NavLink to="/profile">Profile</NavLink>}
-        <NavLink to="/dashboard/user">Dashboard</NavLink>
-        <NavLink to="/dashboard/provider">Provider</NavLink>
-        {user?.role === 'admin' && <NavLink to="/dashboard/admin">Admin</NavLink>}
+        {user && user.role !== 'admin' && <NavLink to="/dashboard/user">My Bookings</NavLink>}
+        {user?.role === 'admin' && (
+          <>
+            <NavLink to="/dashboard/admin">📊 Dashboard</NavLink>
+            <NavLink to="/dashboard/admin/services">🔧 Services</NavLink>
+            <NavLink to="/dashboard/admin/bookings">📅 Bookings</NavLink>
+            <NavLink to="/dashboard/admin/users">👤 Users</NavLink>
+          </>
+        )}
       </nav>
 
       <div className="nav-actions">
         {user ? (
           <>
-            <span className="nav-user">Hi, {user.name}</span>
+            <span className="nav-user">
+              Hi, {user.name}
+              <span className={`role-badge role-badge-${user.role}`}>
+                {user.role === 'admin' ? '🛡️ Admin' : '👤 User'}
+              </span>
+            </span>
             <button className="button button-secondary" onClick={() => { logout(); navigate('/'); }}>
               Logout
             </button>

@@ -1,146 +1,117 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import { getNearbyServices } from '../services/serviceService';
 import ProviderCard from '../components/ProviderCard';
 
 function NearbyServices() {
-  const [location, setLocation] = useState(null);
+  const { user } = useContext(AuthContext);
+
+  const [form, setForm] = useState({
+    pincode:  user?.pincode  || '',
+    city:     user?.city     || '',
+    landmark: user?.landmark || '',
+  });
   const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [radius, setRadius] = useState(10000);
+  const [loading,  setLoading]  = useState(false);
+  const [error,    setError]    = useState('');
+  const [searched, setSearched] = useState(false);
 
-  const mapsKey = import.meta.env.VITE_GOOGLE_MAPS_KEY;
+  const set = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
-  const loadNearby = useCallback(async (coords, searchRadius) => {
-    setLoading(true);
-    setError('');
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!form.pincode && !form.city) { setError('Please enter Pincode or City.'); return; }
+    setError(''); setLoading(true); setSearched(true);
     try {
-      const response = await getNearbyServices({
-        lat: coords.lat,
-        lng: coords.lng,
-        radius: searchRadius,
-        limit: 20,
+      const res = await getNearbyServices({
+        pincode: form.pincode, city: form.city, landmark: form.landmark, limit: 20,
       });
-      setServices(response.services || []);
+      setServices(res.services || []);
     } catch (err) {
-      setError(err?.response?.data?.message || err.message || 'Unable to load nearby services.');
+      setError(err?.response?.data?.message || err.message || 'Unable to load services.');
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser.');
-      return;
-    }
-
-    setLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const coords = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        setLocation(coords);
-        loadNearby(coords, radius);
-      },
-      () => {
-        setError('Unable to detect your location. Please allow location access and refresh.');
-        setLoading(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleRadiusChange = (e) => {
-    const newRadius = Number(e.target.value);
-    setRadius(newRadius);
-    if (location) loadNearby(location, newRadius);
   };
 
-  const providerList = services.map(service => ({
-    id: service._id,
-    name: service.title,
-    initials: service.title.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
-    category: service.category,
-    description: service.description,
-    rating: service.ratings || 4.6,
-    reviews: service.reviews?.length || 0,
+  const providerList = services.map(s => ({
+    id:          s._id,
+    name:        s.title,
+    initials:    s.title.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
+    category:    s.category,
+    description: s.description,
+    rating:      s.ratings || 4.6,
+    reviews:     s.reviews?.length || 0,
   }));
 
-  const mapSrc =
-    location && mapsKey
-      ? `https://www.google.com/maps/embed/v1/view?key=${mapsKey}&center=${location.lat},${location.lng}&zoom=13&maptype=roadmap`
-      : null;
+  const inputStyle = {
+    padding: '0.75rem 1rem', borderRadius: '12px',
+    border: '1.5px solid var(--border)',
+    background: 'var(--surface)', color: 'var(--text)', fontSize: '0.9rem',
+    outline: 'none', width: '100%',
+  };
+  const labelStyle = { display: 'grid', gap: '0.4rem', fontWeight: 700, fontSize: '0.83rem', color: 'var(--text)' };
 
   return (
     <section className="page-container">
-      <div className="section-heading">
+      <div style={{ marginBottom: '2rem' }}>
         <span className="eyebrow">Nearby services</span>
-        <h2>Find service professionals close to you.</h2>
-        <p>Services are ranked by proximity using your browser location and MongoDB geospatial search.</p>
+        <h2 style={{ margin: '0.5rem 0 0.5rem', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 800 }}>
+          Find Service Professionals Near You
+        </h2>
+        <p style={{ color: 'var(--muted)', margin: 0 }}>
+          Enter your pincode or city to discover nearby service providers.
+        </p>
       </div>
 
-      {/* Radius filter */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          Search radius:
-          <select value={radius} onChange={handleRadiusChange}>
-            <option value={2000}>2 km</option>
-            <option value={5000}>5 km</option>
-            <option value={10000}>10 km</option>
-            <option value={25000}>25 km</option>
-            <option value={50000}>50 km</option>
-          </select>
-        </label>
-        {location && (
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted, #888)' }}>
-            📍 {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
-          </span>
-        )}
+      {/* Search form */}
+      <form onSubmit={handleSearch} style={{
+        background: 'var(--surface)', padding: '1.5rem', borderRadius: '20px',
+        boxShadow: 'var(--shadow)', marginBottom: '1.5rem',
+      }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+          <label style={labelStyle}>
+            📮 Pincode
+            <input name="pincode" value={form.pincode} onChange={set}
+              placeholder="e.g. 110001" maxLength={6} style={inputStyle} />
+          </label>
+          <label style={labelStyle}>
+            🏙️ City
+            <input name="city" value={form.city} onChange={set}
+              placeholder="e.g. Delhi" style={inputStyle} />
+          </label>
+          <label style={labelStyle}>
+            🗺️ Landmark (optional)
+            <input name="landmark" value={form.landmark} onChange={set}
+              placeholder="e.g. Near Metro" style={inputStyle} />
+          </label>
+        </div>
+        <button type="submit" className="button" disabled={loading} style={{ minWidth: '160px' }}>
+          {loading ? 'Searching...' : '🔍 Find Services'}
+        </button>
+      </form>
+
+      {/* Priority hint */}
+      <div style={{
+        marginBottom: '1.5rem', padding: '0.75rem 1rem',
+        background: 'rgba(59,130,246,0.06)', borderRadius: '12px',
+        fontSize: '0.85rem', color: 'var(--muted)',
+      }}>
+        🔎 Search priority: <strong style={{ color: 'var(--text)' }}>Pincode</strong> → <strong style={{ color: 'var(--text)' }}>Landmark</strong> → <strong style={{ color: 'var(--text)' }}>City</strong>
       </div>
 
-      {error && <p className="form-error">{error}</p>}
-      {!error && loading && <p>Detecting your location and loading nearby services…</p>}
+      {error && <p className="form-error" style={{ marginBottom: '1rem' }}>{error}</p>}
 
-      {/* Map */}
-      {mapSrc ? (
-        <div
-          className="hero-card"
-          style={{ padding: 0, overflow: 'hidden', minHeight: '320px', marginBottom: '1.5rem' }}
-        >
-          <iframe
-            title="Nearby service map"
-            src={mapSrc}
-            width="100%"
-            height="320"
-            style={{ border: 0, display: 'block' }}
-            allowFullScreen
-            loading="lazy"
-          />
-        </div>
-      ) : location && !mapsKey ? (
-        <div
-          className="hero-card"
-          style={{ marginBottom: '1.5rem', minHeight: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        >
-          <p style={{ color: 'var(--text-muted, #888)', fontSize: '0.9rem' }}>
-            📍 Location detected — add <code>VITE_GOOGLE_MAPS_KEY</code> to your <code>.env</code> file to show the map.
-          </p>
-        </div>
-      ) : null}
+      {searched && !loading && (
+        <p style={{ marginBottom: '1rem', color: 'var(--muted)', fontSize: '0.9rem' }}>
+          {providerList.length > 0
+            ? `Found ${providerList.length} service${providerList.length !== 1 ? 's' : ''}`
+            : 'No services found. Try a different pincode, landmark or city.'}
+        </p>
+      )}
 
-      {/* Results */}
       <div className="provider-grid">
-        {providerList.length > 0
-          ? providerList.map(service => <ProviderCard key={service.id} provider={service} />)
-          : !loading && !error && (
-              <div className="empty-state">
-                <h2>No nearby services found</h2>
-                <p>Try increasing the search radius above.</p>
-              </div>
-            )}
+        {providerList.map(s => <ProviderCard key={s.id} provider={s} />)}
       </div>
     </section>
   );

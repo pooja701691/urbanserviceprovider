@@ -5,6 +5,8 @@ import Services from '../pages/Services';
 import NearbyServices from '../pages/NearbyServices';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
+import VerifyOTP from '../pages/VerifyOTP';
+import Contact from '../pages/Contact';
 import ProviderDetails from '../pages/ProviderDetails';
 import BookingPage from '../pages/BookingPage';
 import UserDashboard from '../pages/UserDashboard';
@@ -26,8 +28,10 @@ function AppRoutes() {
         <Route index element={<Home />} />
         <Route path="services" element={<Services />} />
         <Route path="nearby" element={<NearbyServices />} />
+        <Route path="contact" element={<Contact />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="verify-otp" element={<VerifyOTP />} />
         <Route path="provider/:id" element={<ProviderDetails />} />
         <Route path="booking" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
         <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

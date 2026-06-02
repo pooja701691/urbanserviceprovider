@@ -46,7 +46,7 @@ function BookingForm({ onSubmit, providerName, services = [], selectedService })
 
       <label>
         Preferred date
-        <input name="date" type="date" value={data.date} onChange={handleChange} required />
+        <input name="date" type="date" value={data.date} onChange={handleChange} required min={new Date().toISOString().split('T')[0]} />
       </label>
 
       <label>

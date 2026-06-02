@@ -4,45 +4,26 @@ const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    name:     { type: String, required: true, trim: true },
+    email:    { type: String, required: true, unique: true, lowercase: true, trim: true },
+    password: { type: String, required: true },
+    phone:    { type: String, trim: true, default: '' },
+    avatar:   { type: String, default: '' },
+    role:     { type: String, enum: ['user', 'admin'], default: 'user' },
 
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
+    // Email verification
+    isVerified:     { type: Boolean, default: false },
+    otp:            { type: String, default: null },
+    otpExpiresAt:   { type: Date,   default: null },
 
-    password: {
-      type: String,
-      required: true,
-    },
-
-    phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    avatar: {
-      type: String,
-      default: '',
-    },
-
-    role: {
-      type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
-    },
+    // Address
+    address:        { type: String, default: '' },
+    city:           { type: String, default: '' },
+    state:          { type: String, default: '' },
+    pincode:        { type: String, default: '' },
+    landmark:       { type: String, default: '' },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 UserSchema.pre('save', async function (next) {
@@ -52,20 +33,16 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
-UserSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+UserSchema.methods.comparePassword = async function (candidate) {
+  return bcrypt.compare(candidate, this.password);
 };
 
 UserSchema.methods.generateAuthToken = function () {
-  const payload = {
-    id: this._id,
-    email: this.email,
-    role: this.role,
-  };
-
-  return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: '1d',
-  });
+  return jwt.sign(
+    { id: this._id, email: this.email, role: this.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '1d' }
+  );
 };
 
 module.exports = mongoose.model('User', UserSchema);

@@ -66,8 +66,25 @@ function AdminDashboard() {
 
       <main className="admin-main">
         <header className="admin-header">
-          <h1>Dashboard</h1>
-          <p>Welcome back, {user?.name || 'Administrator'}.</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h1>
+                Dashboard
+                <span className="role-badge role-badge-admin" style={{ marginLeft: '0.75rem', verticalAlign: 'middle', fontSize: '0.65rem' }}>
+                  🛡️ Admin
+                </span>
+              </h1>
+              <p>Welcome back, {user?.name || 'Administrator'}.</p>
+            </div>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <button className="button" onClick={() => navigate('/dashboard/admin/services')}>
+                + Add Service
+              </button>
+              <button className="button button-secondary" onClick={() => navigate('/dashboard/admin/bookings')}>
+                📅 View Bookings
+              </button>
+            </div>
+          </div>
         </header>
 
         <section className="admin-content">

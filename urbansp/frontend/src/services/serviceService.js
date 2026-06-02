@@ -11,6 +11,7 @@ export async function fetchServiceById(id) {
 }
 
 export async function getNearbyServices(params = {}) {
+  // params: { pincode, city, landmark, limit }
   const response = await api.get('/services/nearby', { params });
   return response.data;
 }

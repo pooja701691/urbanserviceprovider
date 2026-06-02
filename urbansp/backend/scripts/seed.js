@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
+const path = require('path');
 const dotenv = require('dotenv');
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 const User = require('../src/models/user.model');
 const Service = require('../src/models/service.model');
 const connectDB = require('../src/config/db');
-
-dotenv.config();
 
 const seed = async () => {
   try {
@@ -14,10 +14,10 @@ const seed = async () => {
     await User.deleteMany({});
     await Service.deleteMany({});
 
-    const admin = new User({ name: 'Admin', email: 'admin@usp.com', password: 'password123', phone: '0000000000', role: 'admin' });
+    const admin = new User({ name: 'Admin', email: 'admin@usp.com', password: 'password123', phone: '0000000000', role: 'admin', isVerified: true, city: 'Delhi', state: 'Delhi', pincode: '110001' });
     await admin.save();
 
-    const user = new User({ name: 'Test User', email: 'user@usp.com', password: 'password123', phone: '1111111111' });
+    const user = new User({ name: 'Test User', email: 'user@usp.com', password: 'password123', phone: '1111111111', isVerified: true, city: 'Delhi', state: 'Delhi', pincode: '110001' });
     await user.save();
 
     const services = [
@@ -28,6 +28,8 @@ const seed = async () => {
         price: 1200,
         city: 'Delhi',
         state: 'Delhi',
+        pincode: '110001',
+        landmark: 'Near Connaught Place',
         location: { type: 'Point', coordinates: [77.2090, 28.6139] },
         createdBy: admin._id,
       },
@@ -38,6 +40,8 @@ const seed = async () => {
         price: 800,
         city: 'Noida',
         state: 'Uttar Pradesh',
+        pincode: '201301',
+        landmark: 'Near Sector 18',
         location: { type: 'Point', coordinates: [77.4493, 28.5355] },
         createdBy: admin._id,
       },
@@ -48,6 +52,8 @@ const seed = async () => {
         price: 500,
         city: 'Gurgaon',
         state: 'Haryana',
+        pincode: '122001',
+        landmark: 'Near DLF Cyber City',
         location: { type: 'Point', coordinates: [77.0266, 28.4595] },
         createdBy: admin._id,
       },

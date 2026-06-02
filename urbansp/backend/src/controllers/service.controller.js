@@ -157,36 +157,39 @@ const deleteService = async (req, res) => {
   }
 };
 
-// GET NEARBY SERVICES (geospatial)
+// GET NEARBY SERVICES — address-based (pincode > landmark > city)
 const getNearbyServices = async (req, res) => {
   try {
-    const { lat, lng, radius = 10000, limit = 20 } = req.query;
+    const { pincode, landmark, city, limit = 20 } = req.query;
 
-    if (!lat || !lng) {
-      return res.status(400).json({ success: false, message: 'lat and lng query params are required' });
+    if (!pincode && !city) {
+      return res.status(400).json({ success: false, message: 'pincode or city is required' });
     }
 
-    const parsedLat = Number(lat);
-    const parsedLng = Number(lng);
-
-    if (isNaN(parsedLat) || isNaN(parsedLng)) {
-      return res.status(400).json({ success: false, message: 'lat and lng must be valid numbers' });
+    // Priority 1: exact pincode match
+    let services = [];
+    if (pincode) {
+      services = await Service.find({ pincode: pincode.trim() })
+        .populate('createdBy', 'name email')
+        .limit(Number(limit));
     }
 
-    const services = await Service.find({
-      location: {
-        $near: {
-          $geometry: { type: 'Point', coordinates: [parsedLng, parsedLat] },
-          $maxDistance: Number(radius),
-        },
-      },
-    })
-      .populate('createdBy', 'name email')
-      .limit(Number(limit));
+    // Priority 2: landmark match (if pincode returned nothing)
+    if (services.length === 0 && landmark) {
+      services = await Service.find({ landmark: { $regex: landmark.trim(), $options: 'i' } })
+        .populate('createdBy', 'name email')
+        .limit(Number(limit));
+    }
+
+    // Priority 3: city match
+    if (services.length === 0 && city) {
+      services = await Service.find({ city: { $regex: `^${city.trim()}$`, $options: 'i' } })
+        .populate('createdBy', 'name email')
+        .limit(Number(limit));
+    }
 
     res.json({ success: true, count: services.length, services });
   } catch (error) {
-    console.error('getNearbyServices error:', error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 };

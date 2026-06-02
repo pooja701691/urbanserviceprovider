@@ -141,6 +141,10 @@ function AdminAnalytics() {
                     </thead>
                     <tbody>
                       <tr>
+                        <td>Accepted</td>
+                        <td>{stats.acceptedBookings ?? (stats.totalBookings - stats.completedBookings - stats.pendingBookings - stats.cancelledBookings)}</td>
+                      </tr>
+                      <tr>
                         <td>Pending</td>
                         <td>{stats.pendingBookings}</td>
                       </tr>
@@ -150,7 +154,7 @@ function AdminAnalytics() {
                       </tr>
                       <tr>
                         <td>Cancelled</td>
-                        <td>{stats.totalBookings - stats.completedBookings - stats.pendingBookings}</td>
+                        <td>{stats.cancelledBookings}</td>
                       </tr>
                     </tbody>
                   </table>
