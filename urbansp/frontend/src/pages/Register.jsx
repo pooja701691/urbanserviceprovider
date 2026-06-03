@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Loader from '../components/Loader';
 
-const HERO_IMG = 'https://ik.imagekit.io/8czehsmp7/Screenshot%202026-05-26%20130459.png';
+const HERO_IMG = 'https://ik.imagekit.io/8czehsmp7/Jun%203,%202026,%2009_27_50%20PM.png';
 
 function Register() {
   const { register } = useContext(AuthContext);
