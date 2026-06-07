@@ -1,1 +1,5 @@
-node_modules/`n*.env`n*.env.*`n!.env.example`n!.env.*.example`n
+node_modules/
+*.env
+*.env.*
+!.env.example
+!.env.*.example
