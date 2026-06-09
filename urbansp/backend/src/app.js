@@ -22,7 +22,7 @@ connectDB();
 // Security & logging
 app.use(helmet({ crossOriginResourcePolicy: true }));
 app.use(cors({
-  origin: 'https://urbanserviceprovider-nmz8.vercel.app/',
+  origin: 'https://urbanserviceprovider-nmz8.vercel.app',
   credentials: true,
 }));
 app.use(morgan('tiny'));
